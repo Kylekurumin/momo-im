@@ -1,6 +1,7 @@
 package main
 
 import (
+	"momo-im/app"
 	"momo-im/pkg/websocket"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,12 @@ import (
 func main() {
 	initConfig()
 	engine := gin.Default()
-	websocket.InitWebsocket(engine)
+	go websocket.InitWebsocket(engine)
+
+	app.Init(engine)
+
+	httpPort := viper.GetString("app.httpPort")
+	engine.Run(":" + httpPort)
 }
 
 func initConfig() {
