@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"fmt"
+	websocketClient "momo-im/pkg/client"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -20,4 +21,8 @@ func wsPage(ctx *gin.Context) {
 		return
 	}
 	fmt.Println("connected: ", conn.RemoteAddr().String())
+
+	c := websocketClient.NewClient(conn.RemoteAddr().String(), conn)
+
+	go c.Write()
 }

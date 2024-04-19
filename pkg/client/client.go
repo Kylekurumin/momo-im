@@ -31,29 +31,36 @@ func NewClient(addr string, socket *websocket.Conn) *Client {
 	}
 }
 
+func (c *Client) Key() string {
+	return fmt.Sprintf("%d_%s", c.AppID, c.UserID)
+}
+
 func (c *Client) SendMsg(msg []byte) {
 	if c == nil {
 		return
 	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("client send message stop", string(debug.Stack()), r)
+		}
+	}()
+
 	c.Send <- msg
 }
 
-// write is a goroutine that waits for the data to be written. Once data is available,
+// Write is a goroutine that waits for the data to be written. Once data is available,
 // it writes (push) the data to the client's websocket connection.
-func (c *Client) write() {
+func (c *Client) Write() {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("write stop", string(debug.Stack()), r)
 		}
 	}()
-	for {
-		select {
-		case message, ok := <-c.Send:
-			if !ok {
-				fmt.Println("client write channel is closed, closing the connection...", c.Addr)
-				return
-			}
-			_ = c.Socket.WriteMessage(websocket.TextMessage, message)
-		}
+	for message := range c.Send {
+		_ = c.Socket.WriteMessage(websocket.TextMessage, message)
 	}
+
+	fmt.Println("client write channel is closed, closing the connection...", c.Addr)
+	_ = c.Socket.Close()
 }

@@ -16,7 +16,7 @@ func main() {
 	app.Init(engine)
 
 	httpPort := viper.GetString("app.httpPort")
-	engine.Run(":" + httpPort)
+	_ = engine.Run(":" + httpPort)
 }
 
 func initConfig() {
