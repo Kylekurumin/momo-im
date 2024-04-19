@@ -19,7 +19,16 @@ func (mgr *Manager) ClientIsExists() bool {
 }
 
 func (mgr *Manager) ListAllClients() []*Client {
-	return nil
+	res := make([]*Client, 0)
+	mgr.ClientsLock.RLock()
+	defer mgr.ClientsLock.RUnlock()
+
+	for client, value := range mgr.Clients {
+		if value {
+			res = append(res, client)
+		}
+	}
+	return res
 }
 
 func (mgr *Manager) AddClient(client *Client) {
