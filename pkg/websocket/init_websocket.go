@@ -2,13 +2,15 @@ package websocket
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/spf13/viper"
 )
 
 func InitWebsocket(engine *gin.Engine) {
 	engine.GET("/ws", wsPage)
-	engine.Run(":8080")
+	_ = engine.Run(viper.GetString("app.webSocketUrl"))
 }
 
 func wsPage(ctx *gin.Context) {

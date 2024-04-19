@@ -1,9 +1,10 @@
 package main
 
 import (
+	"momo-im/pkg/websocket"
+
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"momo-im/pkg/websocket"
 )
 
 func main() {
