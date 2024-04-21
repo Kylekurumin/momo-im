@@ -37,3 +37,8 @@ func NewMessage(from, msg string) *Message {
 		Msg:  msg,
 	}
 }
+
+type MessageController struct {
+}
+
+func (mc *MessageController) GetMsgID() string {}

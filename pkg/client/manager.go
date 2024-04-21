@@ -2,6 +2,8 @@ package client
 
 import "sync"
 
+var ManagerInstance *Manager
+
 type Manager struct {
 	// Clients is a set of all the client's connections
 	Clients     map[*Client]bool
@@ -12,6 +14,25 @@ type Manager struct {
 	Register   chan *Client
 	Unregister chan *Client
 	Broadcast  chan []byte
+}
+
+func NewManager() *Manager {
+	return &Manager{
+		Clients:     make(map[*Client]bool),
+		ClientsLock: &sync.RWMutex{},
+		Users:       make(map[string]*Client),
+		UserLock:    &sync.RWMutex{},
+		Register:    make(chan *Client, 1000),
+		Unregister:  make(chan *Client, 1000),
+		Broadcast:   make(chan []byte, 1000),
+	}
+}
+
+func GetManagerInstance() *Manager {
+	if ManagerInstance == nil {
+		ManagerInstance = NewManager()
+	}
+	return ManagerInstance
 }
 
 func (mgr *Manager) ClientIsExists() bool {
